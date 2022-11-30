@@ -7,11 +7,19 @@
   ansible.builtin.apt_repository:
     repo: "deb [signed-by=/etc/apt/trusted.gpg.d/elasticsearch.asc] https://artifacts.elastic.co/packages/7.x/apt stable main"
     state: present
-- name: elasticsearch 7.17 installed
+- name: elasticsearch installed
   ansible.builtin.apt:
-    name: elasticsearch=7.17*
+    name: elasticsearch={{u22_elasticsearch7_version}}
     state: present
-- name: elasticsearch service enabled
+- name: elasticsearch config in place
+  notify: restart elasticsearch
+  ansible.builtin.template:
+    src: elasticsearch.yml
+    dest: /etc/elasticsearch/elasticsearch.yml
+    owner: root
+    group: root
+    mode: "0644"
+- name: elasticsearch service enabled/running
   ansible.builtin.service:
     name: elasticsearch
     state: started
