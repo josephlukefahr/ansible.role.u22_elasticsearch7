@@ -1,0 +1,18 @@
+---
+- name: elasticsearch code signing key in place
+  ansible.builtin.get_url:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    dest: /etc/apt/trusted.gpg.d/elasticsearch.asc
+- name: elasticsearch 7.x apt repository registered
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/trusted.gpg.d/elasticsearch.asc] https://artifacts.elastic.co/packages/7.x/apt stable main"
+    state: present
+- name: elasticsearch 7.17 installed
+  ansible.builtin.apt:
+    name: elasticsearch=7.17*
+    state: present
+- name: elasticsearch service enabled
+  ansible.builtin.service:
+    name: elasticsearch
+    state: started
+    enabled: yes
